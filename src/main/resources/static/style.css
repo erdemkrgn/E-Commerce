@@ -1,0 +1,47 @@
+/* Genel stil ayarları */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5fff5; /* Çok açık yeşil ton */
+    margin: 0;
+    padding: 0;
+}
+
+/* Header ayarları */
+header {
+    background-color: #2e7d32; /* Yeşil ton */
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Navigasyon linkleri */
+nav a {
+    color: #fff;
+    margin: 0 1rem;
+    text-decoration: none;
+}
+
+/* Ana içerik bölümü */
+main {
+    padding: 2rem;
+}
+
+/* Footer ayarları */
+footer {
+    background-color: #2e7d32;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/* Giriş formu stili */
+.login-container {
+    width: 300px;
+    margin: 5rem auto;
+    padding: 2rem;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
