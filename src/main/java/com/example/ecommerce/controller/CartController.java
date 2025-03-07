@@ -28,9 +28,13 @@ public class CartController {
     // Kullanıcının sepetini görüntüler.
     @GetMapping
     public String viewCart(Model model, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username).orElse(null);
-        if(user != null) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email).orElse(null);
+        if (user != null) {
             Cart cart = cartService.getCartByUser(user);
             model.addAttribute("cart", cart);
         }
@@ -42,11 +46,15 @@ public class CartController {
     public String addProductToCart(@PathVariable Long productId,
                                    @RequestParam(defaultValue = "1") int quantity,
                                    Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username).orElse(null);
-        if(user != null) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email).orElse(null);
+        if (user != null) {
             Product product = productService.getProductById(productId);
-            if(product != null) {
+            if (product != null) {
                 cartService.addProductToCart(user, product, quantity);
             }
         }
@@ -56,9 +64,13 @@ public class CartController {
     // Sepetten ürünü çıkarır.
     @PostMapping("/remove/{productId}")
     public String removeProductFromCart(@PathVariable Long productId, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username).orElse(null);
-        if(user != null) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        String email = authentication.getName();
+        User user = userService.findByEmail(email).orElse(null);
+        if (user != null) {
             cartService.removeProductFromCart(user, productId);
         }
         return "redirect:/cart";

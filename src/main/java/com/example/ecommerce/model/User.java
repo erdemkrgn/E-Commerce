@@ -1,28 +1,40 @@
 package com.example.ecommerce.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users") // "user" ifadesi bazı veritabanlarında rezerve olabilir.
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Oturum açmak için benzersiz kullanıcı adı
-    @Column(nullable = false, unique = true)
-    private String username;
+    @NotBlank(message = "Ad zorunludur")
+    @Column(nullable = false)
+    private String firstName;
 
+    @NotBlank(message = "Soyad zorunludur")
+    @Column(nullable = false)
+    private String lastName;
+
+    @NotBlank(message = "Şifre zorunludur")
     @Column(nullable = false)
     private String password;
 
+    @NotBlank(message = "E-posta zorunludur")
+    @Email(message = "Geçerli bir e-posta adresi girin")
     @Column(nullable = false, unique = true)
     private String email;
 
-    // Kullanıcının rollerini saklamak için (çoktan çoka ilişki)
+    @NotBlank(message = "Adres bilgisi zorunludur")
+    @Column(nullable = false)
+    private String address;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -38,24 +50,42 @@ public class User {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getUsername() {
-        return username;
+
+    public String getFirstName() {
+        return firstName;
     }
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
+
+    public String getLastName() {
+        return lastName;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public String getPassword() {
         return password;
     }
     public void setPassword(String password) {
         this.password = password;
     }
+
     public String getEmail() {
         return email;
     }
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }

@@ -10,17 +10,17 @@
     <h2>Giriş Yap</h2>
     <!-- Eğer URL'de 'error' parametresi varsa hata mesajını göster -->
     <div th:if="${param.error}">
-        <p style="color: red;">Giriş başarısız. Lütfen kullanıcı adı veya şifrenizi kontrol edin.</p>
+        <p style="color: red;">Giriş başarısız. Lütfen e-posta adresinizi veya şifrenizi kontrol edin.</p>
     </div>
     <form action="/login" method="post">
         <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
         <div>
-            <label>Kullanıcı Adı:</label>
-            <input type="text" name="username" />
+            <label>Email:</label>
+            <input type="email" name="email" required />
         </div>
         <div>
             <label>Parola:</label>
-            <input type="password" name="password" />
+            <input type="password" name="password" required />
         </div>
         <div>
             <input type="checkbox" name="remember-me" /> Beni Hatırla

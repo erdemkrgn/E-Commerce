@@ -49,12 +49,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index", "/login", "/products", "/css/**", "/js/**").permitAll() // Giriş ve ürün sayfasını aç
+                        .requestMatchers("/", "/index", "/login", "/register", "/products", "/css/**", "/js/**").permitAll() // Giriş ve ürün sayfasını aç
                         .anyRequest().authenticated() // Diğer tüm istekler için giriş gereksin
                 )
                 .formLogin(login -> login
                         .loginPage("/login") // HomeController'daki `/login` URL'sini kullan
                         .defaultSuccessUrl("/", true) // Giriş başarılıysa anasayfaya yönlendir
+                        .usernameParameter("email")
                         .permitAll()
                 )
                 .logout(logout -> logout

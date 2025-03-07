@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
+import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -18,18 +18,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(usernameOrEmail);
-
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException("Kullanıcı bulunamadı: " + usernameOrEmail);
-        }
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Burada email ile kullanıcı bulunuyor
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Kullanıcı bulunamadı: " + email));
 
         return org.springframework.security.core.userdetails.User
                 .builder()
-                .username(user.get().getEmail())  // Kullanıcı adı olarak email kullanılıyor
-                .password(user.get().getPassword())
-                .roles(user.get().getRoles().toArray(new String[0]))
+                .username(user.getEmail())  // Kullanıcı adı yerine email kullanılıyor
+                .password(user.getPassword()) // Hashlenmiş şifre
+                .authorities(Collections.emptyList()) // Roller burada eklenebilir
                 .build();
     }
 }
