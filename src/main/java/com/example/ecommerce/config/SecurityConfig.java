@@ -1,59 +1,68 @@
 package com.example.ecommerce.config;
 
+import com.example.ecommerce.repository.UserRepository;
+import com.example.ecommerce.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@Configuration // Bu sınıf, uygulamanın güvenlik yapılandırmasını içerir.
+import java.util.List;
+
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-    // Yeni güvenlik yapılandırması: SecurityFilterChain bean'i tanımlıyoruz.
+    private final UserRepository userRepository;
+
+    public SecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new CustomUserDetailsService(userRepository);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(List.of(authProvider));
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // URL'lere erişim kuralları belirliyoruz.
-                .authorizeHttpRequests(authorize -> authorize
-                        // "/" ve "/index" sayfalarına, ayrıca "/css/**" ve "/js/**" gibi statik kaynaklara herkese izin veriyoruz.
-                        .requestMatchers("/", "/index", "/css/**", "/js/**").permitAll()
-                        // Diğer tüm istekler doğrulama gerektirsin.
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/index", "/login", "/products", "/css/**", "/js/**").permitAll() // Giriş ve ürün sayfasını aç
+                        .anyRequest().authenticated() // Diğer tüm istekler için giriş gereksin
                 )
-                // Özel giriş sayfası ve form tabanlı oturum açmayı ayarlıyoruz.
-                .formLogin(form -> form
-                        .loginPage("/login") // Özel giriş sayfası
-                        .permitAll()         // Giriş sayfasına herkes erişebilsin
+                .formLogin(login -> login
+                        .loginPage("/login") // HomeController'daki `/login` URL'sini kullan
+                        .defaultSuccessUrl("/", true) // Giriş başarılıysa anasayfaya yönlendir
+                        .permitAll()
                 )
-                // "Remember-me" (beni hatırla) özelliğini cookie ile etkinleştiriyoruz.
-                .rememberMe(remember -> remember
-                        .key("uniqueAndSecret") // Güvenlik anahtarı
-                        .tokenValiditySeconds(7 * 24 * 60 * 60) // Token geçerlilik süresi: 7 gün
-                )
-                // Çıkış işlemini yapılandırıyoruz.
-                .logout(logout -> logout.permitAll());
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout") // Çıkıştan sonra login sayfasına yönlendir
+                        .permitAll()
+                );
 
         return http.build();
-    }
-
-    // Bellek içi (in-memory) kullanıcı tanımlaması yapıyoruz.
-    // Gerçek bir uygulamada, kullanıcılarınızı veritabanından çekecek şekilde yapılandırmanız önerilir.
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder() // Parola şifrelemesi demo amaçlıdır.
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("adminpass")
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
     }
 }

@@ -8,8 +8,12 @@
 <body>
 <div class="login-container">
     <h2>Giriş Yap</h2>
-    <!-- Spring Security tarafından kullanılan giriş formu -->
-    <form th:action="@{/login}" method="post">
+    <!-- Eğer URL'de 'error' parametresi varsa hata mesajını göster -->
+    <div th:if="${param.error}">
+        <p style="color: red;">Giriş başarısız. Lütfen kullanıcı adı veya şifrenizi kontrol edin.</p>
+    </div>
+    <form action="/login" method="post">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
         <div>
             <label>Kullanıcı Adı:</label>
             <input type="text" name="username" />

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sepetim</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header>
+    <h1>My E-Commerce Site</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/cart">Cart</a>
+        <a href="/logout">Logout</a>
+    </nav>
+</header>
+<main>
+    <h2>Sepetim</h2>
+    <div th:if="${cart == null or #lists.isEmpty(cart.items)}">
+        <p>Sepetinizde ürün yok.</p>
+    </div>
+    <div th:if="${cart != null and !#lists.isEmpty(cart.items)}">
+        <table>
+            <thead>
+            <tr>
+                <th>Ürün</th>
+                <th>Fiyat</th>
+                <th>Miktar</th>
+                <th>Toplam</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cart.items}">
+                <td th:text="${item.product.name}">Ürün Adı</td>
+                <td th:text="${item.product.price}">Fiyat</td>
+                <td th:text="${item.quantity}">Miktar</td>
+                <td th:text="${item.product.price.multiply(T(java.math.BigDecimal).valueOf(item.quantity))}">Toplam</td>
+                <td>
+                    <form th:action="@{/cart/remove/{productId}(productId=${item.product.id})}" method="post">
+                        <button type="submit">Çıkar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2025 My E-Commerce Site</p>
+</footer>
+</body>
+</html>

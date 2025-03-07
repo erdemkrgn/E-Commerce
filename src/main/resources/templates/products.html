@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Ürünler</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<header>
+    <h1>My E-Commerce Site</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/cart" sec:authorize="isAuthenticated()">Cart</a>
+        <!-- Kullanıcı giriş yapmamışsa Login ve Register görünsün -->
+        <a href="/login" sec:authorize="!isAuthenticated()">Login</a>
+        <a href="/register" sec:authorize="!isAuthenticated()">Register</a>
+        <!-- Kullanıcı giriş yapmışsa Logout görünsün -->
+        <a href="/logout" sec:authorize="isAuthenticated()">Logout</a>
+    </nav>
+</header>
+<main>
+    <section>
+        <h2>Ürünler</h2>
+        <div class="product-list">
+            <div th:each="product : ${products}" class="product">
+                <img th:src="${product.imageUrl}" alt="Ürün Görseli" />
+                <h3 th:text="${product.name}">Ürün Adı</h3>
+                <p th:text="${product.description}">Ürün Açıklaması</p>
+                <p>Fiyat: <span th:text="${product.price}">0.00</span></p>
+                <form th:action="@{/cart/add/{productId}(productId=${product.id})}" method="post">
+                    <input type="number" name="quantity" value="1" min="1" />
+                    <button type="submit">Sepete Ekle</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+<footer>
+    <p>&copy; 2025 My E-Commerce Site</p>
+</footer>
+</body>
+</html>
