@@ -1,4 +1,3 @@
-/* Genel stil ayarları */
 body {
     font-family: Arial, sans-serif;
     background-color: #f5fff5; /* Çok açık yeşil ton */
@@ -6,7 +5,6 @@ body {
     padding: 0;
 }
 
-/* Header ayarları */
 header {
     background-color: #2e7d32; /* Yeşil ton */
     color: #fff;
@@ -14,19 +12,16 @@ header {
     text-align: center;
 }
 
-/* Navigasyon linkleri */
 nav a {
     color: #fff;
     margin: 0 1rem;
     text-decoration: none;
 }
 
-/* Ana içerik bölümü */
 main {
     padding: 2rem;
 }
 
-/* Footer ayarları */
 footer {
     background-color: #2e7d32;
     color: #fff;
@@ -37,11 +32,28 @@ footer {
     bottom: 0;
 }
 
-/* Giriş formu stili */
-.login-container {
+.login-container, .register-container {
     width: 300px;
     margin: 5rem auto;
     padding: 2rem;
     border: 1px solid #ccc;
     background-color: #fff;
+}
+
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.product {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    width: 250px;
+    text-align: center;
+}
+
+.product img {
+    max-width: 100%;
+    height: auto;
 }
